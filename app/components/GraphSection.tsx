@@ -238,9 +238,9 @@ export function GraphSection({
       const textW = ctx.measureText(label).width;
       const w = textW + PILL_PADDING_X * 2;
       const h = fontSize + PILL_PADDING_Y * 2;
-      ctx.fillStyle = "#ecfdf5";
+      ctx.fillStyle = "#f5f5f5";
       roundRect(ctx, node.x - w / 2, node.y - h / 2, w, h, 12, true, false);
-      ctx.fillStyle = "#065f46";
+      ctx.fillStyle = "#262626";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(label, node.x, node.y);
@@ -248,9 +248,9 @@ export function GraphSection({
       const radius = 5 + Math.min(18, (node.hits || 1) * 1.2);
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false);
-      ctx.fillStyle = "#60a5fa";
+      ctx.fillStyle = "#a3a3a3";
       ctx.fill();
-      ctx.strokeStyle = "#1e40af";
+      ctx.strokeStyle = "#525252";
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -304,12 +304,12 @@ export function GraphSection({
           <div className="grid grid-cols-1 gap-4">
              {/* Conditionally render Histogram if data exists */}
              {histogramData.length > 0 && (
-               <div className="card p-5 flex flex-col">
-                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-4">Document Distribution</h3>
+               <div className="card p-4 flex flex-col">
+                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Document Distribution</h3>
                   <div className="flex-1 min-h-[180px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
-                        data={histogramData} // Shows all data
+                        data={histogramData}
                         margin={{ top: 5, right: 5, left: -25, bottom: 0 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
@@ -360,7 +360,10 @@ export function GraphSection({
              <div className="card p-5 flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                     <h3 className="text-sm font-semibold text-[var(--foreground)]">AI Analysis</h3>
+                     <div className="p-1.5 rounded-md bg-[var(--foreground)]/5 text-[var(--foreground)]">
+                       <span className="font-bold text-xs">AI</span>
+                     </div>
+                     <h3 className="text-sm font-semibold text-[var(--foreground)]">Analysis</h3>
                      <span className="text-xs text-[var(--muted)]">
                        Articles: {relevantArticles.length}
                      </span>

@@ -45,19 +45,21 @@ export function CsvUploadSection({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-sm"
+      className="p-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-sm"
     >
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-3">
         <div className="p-1.5 rounded-md bg-[var(--foreground)]/5 text-[var(--foreground)]">
           <Upload className="w-4 h-4" />
         </div>
         <h3 className="text-sm font-semibold text-[var(--foreground)]">Data Import</h3>
       </div>
       
-      <div className="grid gap-4">
-        <div className="text-xs text-[var(--muted)] mb-2 p-3 rounded-lg bg-[var(--foreground)]/5 border border-[var(--border)]">
-          <span className="font-semibold text-[var(--foreground)]">Format:</span> CSV file should contain a Title field and then a Link field.
-        </div>
+      <div className="grid gap-3">
+        {progress.done === 0 && (
+          <div className="text-xs text-[var(--muted)] p-2 rounded-lg bg-[var(--foreground)]/5 border border-[var(--border)]">
+            CSV should contain Title and Link fields.
+          </div>
+        )}
 
         <label className="block w-full group cursor-pointer">
           <input

@@ -116,23 +116,39 @@ export function KeywordsSection({
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)]">
-            {sortedKeywords.slice(0, 600).map((k) => (
-              <tr
-                key={k.term}
-                className="hover:bg-[var(--foreground)]/5 transition-colors group"
-              >
-                <td className="px-4 py-2 font-medium text-[var(--foreground)]">{k.term}</td>
-                <td className="px-4 py-2 text-right tabular-nums text-[var(--muted)]">{k.df}</td>
-                <td className="px-4 py-2 text-right">
-                  <button
-                    onClick={() => onAddKeyword(k.term)}
-                    className="px-2.5 py-1 text-xs font-medium rounded-md border border-[var(--border)] bg-[var(--card-bg)] text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                  >
-                    Add
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {sortedKeywords.slice(0, 600).map((k) => {
+              const isSelected = selected.includes(k.term);
+              return (
+                <tr
+                  key={k.term}
+                  className={`transition-colors group ${
+                    isSelected 
+                      ? "bg-[var(--primary)]/10" 
+                      : "hover:bg-[var(--foreground)]/5"
+                  }`}
+                >
+                  <td className="px-4 py-2 font-medium text-[var(--foreground)]">{k.term}</td>
+                  <td className="px-4 py-2 text-right tabular-nums text-[var(--muted)]">{k.df}</td>
+                  <td className="px-4 py-2 text-right">
+                    {isSelected ? (
+                      <button
+                        onClick={() => onRemoveKeyword(k.term)}
+                        className="px-2.5 py-1 text-xs font-medium rounded-md border border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--foreground)] hover:bg-[var(--primary)]/20 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => onAddKeyword(k.term)}
+                        className="px-2.5 py-1 text-xs font-medium rounded-md border border-[var(--border)] bg-[var(--card-bg)] text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                      >
+                        Add
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
