@@ -2,10 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Upload } from "lucide-react";
+import { Upload, Globe } from "lucide-react";
 import Papa from "papaparse";
 import type { Row } from "@/app/types";
 import { guessTitleKey, guessUrlKey } from "@/app/lib/columnHelpers";
+import { ProgressBar } from "./ui/ProgressBar";
 
 interface CsvUploadSectionProps {
   rowCount: number;
@@ -14,9 +15,18 @@ interface CsvUploadSectionProps {
     guessedTitle: string,
     guessedUrl: string
   ) => void;
+  onScrape: () => void;
+  scraping: boolean;
+  progress: { done: number; total: number };
 }
 
-export function CsvUploadSection({ rowCount, onFileLoaded }: CsvUploadSectionProps) {
+export function CsvUploadSection({ 
+  rowCount, 
+  onFileLoaded,
+  onScrape,
+  scraping,
+  progress 
+}: CsvUploadSectionProps) {
   function handleFile(file: File) {
     Papa.parse<Row>(file, {
       header: true,
@@ -35,24 +45,57 @@ export function CsvUploadSection({ rowCount, onFileLoaded }: CsvUploadSectionPro
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 rounded-2xl border bg-zinc-50 dark:bg-zinc-900/40"
+      className="p-5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-sm"
     >
-      <div className="flex items-center gap-2 mb-3 font-medium">
-        <Upload className="w-4 h-4" /> Load CSV
+      <div className="flex items-center gap-2 mb-4">
+        <div className="p-1.5 rounded-md bg-[var(--foreground)]/5 text-[var(--foreground)]">
+          <Upload className="w-4 h-4" />
+        </div>
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">Data Import</h3>
       </div>
-      <div className="grid gap-3">
-        <input
-          type="file"
-          accept=".csv,text/csv"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleFile(file);
-          }}
-          className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-zinc-900 file:text-white hover:file:opacity-90 dark:file:bg-white dark:file:text-black"
-        />
+      
+      <div className="grid gap-4">
+        <div className="text-xs text-[var(--muted)] mb-2 p-3 rounded-lg bg-[var(--foreground)]/5 border border-[var(--border)]">
+          <span className="font-semibold text-[var(--foreground)]">Format:</span> CSV file should contain a Title field and then a Link field.
+        </div>
+
+        <label className="block w-full group cursor-pointer">
+          <input
+            type="file"
+            accept=".csv,text/csv"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleFile(file);
+            }}
+            disabled={scraping}
+            className="block w-full text-sm text-[var(--muted)]
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-lg file:border-0
+              file:text-xs file:font-medium
+              file:bg-[var(--foreground)] file:text-[var(--background)]
+              hover:file:opacity-90 transition-opacity
+              cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+        </label>
+        
         {rowCount > 0 && (
-          <div className="text-xs text-zinc-500">
-            Loaded {rowCount.toLocaleString()} rows
+          <div className="space-y-4">
+            {/* Hide button after analysis has started */}
+            {progress.done === 0 && (
+              <button
+                disabled={scraping || rowCount === 0}
+                onClick={onScrape}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--primary)] text-[var(--primary-fg)] font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-sm"
+              >
+                <Globe className="w-4 h-4" />
+                Start Analysis
+              </button>
+            )}
+            
+            {/* Show progress bar once analysis starts, keep it visible after completion */}
+            {progress.done > 0 && (
+              <ProgressBar done={progress.done} total={progress.total} />
+            )}
           </div>
         )}
       </div>

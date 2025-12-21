@@ -10,14 +10,14 @@ interface PillProps {
 
 export function Pill({ children, onRemove }: PillProps) {
   return (
-    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-sm border">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--muted)]/10 text-[var(--foreground)] text-xs font-medium border border-[var(--border)]">
       {children}
       {onRemove && (
         <button
           onClick={onRemove}
-          className="rounded-full p-1 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          className="rounded-full p-0.5 hover:bg-[var(--foreground)]/10 transition-colors"
         >
-          <X className="w-3.5 h-3.5" />
+          <X className="w-3 h-3" />
         </button>
       )}
     </span>

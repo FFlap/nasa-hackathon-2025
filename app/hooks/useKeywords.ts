@@ -37,26 +37,25 @@ export function useKeywords(articles: Article[]): UseKeywordsResult {
     [articles, selected, docTfs]
   );
 
-  // Frequency histogram data: df per topic word
+  // Frequency histogram data: df per topic word (always show top 20 or filtered query results)
   const histogramData = useMemo(() => {
-    const topics = selected.length
-      ? selected
-      : ranked.slice(0, 20).map((k) => k.term);
+    // Always use top ranked/filtered terms for the histogram to provide global context
+    const topics = filteredRanked.slice(0, 20).map((k) => k.term);
+    
     const dfMap = new Map<string, number>();
     for (const t of topics) {
-      let count = 0;
-      for (const a of articles) {
-        const tf = docTfs.get(a.id);
-        if (tf?.has(t)) count++;
+      // Map term to its pre-computed DF from filteredRanked
+      const stat = filteredRanked.find(k => k.term === t);
+      if (stat) {
+        dfMap.set(t, stat.df);
       }
-      dfMap.set(t, count);
     }
+    
     return Array.from(dfMap.entries())
       .map(([term, count]) => ({ term, count }))
       .sort((a, b) => b.count - a.count);
-  }, [articles, docTfs, ranked, selected]);
+  }, [filteredRanked]);
 
-  // Relevant articles for summary (auto-selected by keywords)
   const relevantArticles = useMemo(() => {
     if (!selected.length) return [];
     return articles.filter((a) => {
