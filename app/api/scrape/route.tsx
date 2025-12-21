@@ -1,12 +1,15 @@
 import * as cheerio from "cheerio";
+import { getErrorMessage } from "@/app/types";
+import type { ScrapeResponse } from "@/app/types";
 
 export const dynamic = "force-dynamic"; // ensure runtime on server
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<Response> {
     try {
-        const { url } = await req.json();
+        const { url } = await req.json() as { url: unknown };
         if (!url || typeof url !== "string" || !/^https?:\/\//i.test(url)) {
-            return Response.json({ ok: false, error: "Invalid URL" }, { status: 400 });
+            const response: ScrapeResponse = { ok: false, error: "Invalid URL" };
+            return Response.json(response, { status: 400 });
         }
 
         // Fetch HTML on the server (avoids CORS)
@@ -20,13 +23,15 @@ export async function POST(req: Request) {
         });
 
         if (!res.ok) {
-            return Response.json({ ok: false, error: `Fetch ${res.status}` }, { status: 502 });
+            const response: ScrapeResponse = { ok: false, error: `Fetch ${res.status}` };
+            return Response.json(response, { status: 502 });
         }
 
         // Require HTML-ish content
         const ct = res.headers.get("content-type") || "";
         if (!/text\/html|application\/xhtml\+xml/i.test(ct)) {
-            return Response.json({ ok: false, error: "Not an HTML page" }, { status: 415 });
+            const response: ScrapeResponse = { ok: false, error: "Not an HTML page" };
+            return Response.json(response, { status: 415 });
         }
 
         const html = await res.text();
@@ -52,18 +57,21 @@ export async function POST(req: Request) {
             $("title").first().text() ||
             $("h1").first().text();
 
-        return Response.json({ ok: true, title: trim(title), text: trim(text) });
-    } catch (err: any) {
-        return Response.json({ ok: false, error: err?.message || "Unknown error" }, { status: 500 });
+        const response: ScrapeResponse = { ok: true, title: trim(title), text: trim(text) };
+        return Response.json(response);
+    } catch (err: unknown) {
+        const response: ScrapeResponse = { ok: false, error: getErrorMessage(err) };
+        return Response.json(response, { status: 500 });
     }
 }
 
-function clean(s: string) {
+function clean(s: string): string {
     return s
         .replace(/\u00a0/g, " ")
         .replace(/\s+/g, " ")
         .replace(/^\s+|\s+$/g, "");
 }
-function trim(s?: string) {
+
+function trim(s?: string): string {
     return (s || "").trim();
 }

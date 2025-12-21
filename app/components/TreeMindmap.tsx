@@ -2,20 +2,17 @@
 
 import React, { useMemo, useRef, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import type { RawNodeDatum } from "react-d3-tree";
+import type { RawNodeDatum, CustomNodeElementProps } from "react-d3-tree";
+import type { GraphNode, GraphLink, TreeNodeDatum, TreeNodeClickData } from "@/app/types";
 
 const Tree = dynamic(() => import("react-d3-tree"), { ssr: false });
 
-type GraphNode = { id: string; type: "keyword" | "article"; label: string; url?: string; hits?: number };
-type GraphLink = { source: string | GraphNode; target: string | GraphNode; weight: number };
-
-export default function TreeMindmap({
-  nodes,
-  links,
-}: {
+interface TreeMindmapProps {
   nodes: GraphNode[];
   links: GraphLink[];
-}) {
+}
+
+export default function TreeMindmap({ nodes, links }: TreeMindmapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [translate, setTranslate] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -24,8 +21,8 @@ export default function TreeMindmap({
     const kwNodes = nodes.filter(n => n.type === "keyword");
     const articleByKw: Record<string, GraphNode[]> = {};
     for (const l of links) {
-      const s = typeof l.source === "string" ? l.source : (l.source as GraphNode).id;
-      const t = typeof l.target === "string" ? l.target : (l.target as GraphNode).id;
+      const s = typeof l.source === "string" ? l.source : l.source;
+      const t = typeof l.target === "string" ? l.target : l.target;
       const a = nodes.find(n => n.id === s) ?? nodes.find(n => n.id === t);
       const b = nodes.find(n => n.id === t) ?? nodes.find(n => n.id === s);
       const kw = [a, b].find(n => n?.type === "keyword");
@@ -55,11 +52,12 @@ export default function TreeMindmap({
     setTranslate({ x: 140, y: height / 2 });
   }, []);
 
-  const renderNode = ({ nodeDatum }: any) => {
-    const role = nodeDatum?.attributes?.role as ("keyword" | "article" | undefined);
-    const isRoot = nodeDatum.name === "Topics";
+  const renderNode = ({ nodeDatum }: CustomNodeElementProps) => {
+    const datum = nodeDatum as unknown as TreeNodeDatum;
+    const role = datum?.attributes?.role;
+    const isRoot = datum.name === "Topics";
     const fontSize = role === "keyword" ? 13 : 12;
-    const text = nodeDatum.name as string;
+    const text = datum.name;
     const w = Math.max(60, text.length * (fontSize * 0.62)) + 20;
     const h = fontSize + 12;
     const rx = 12;
@@ -82,14 +80,14 @@ export default function TreeMindmap({
           fontSize={fontSize}
           style={{ pointerEvents: "none", fontFamily: "Inter, ui-sans-serif" }}
         >
-          {nodeDatum.name}
+          {datum.name}
         </text>
       </g>
     );
   };
 
-  const handleNodeClick = (nodeData: any) => {
-    const url = nodeData?.data?.attributes?.url as string | undefined;
+  const handleNodeClick = (nodeData: TreeNodeClickData) => {
+    const url = nodeData?.data?.attributes?.url;
     if (url && /^https?:\/\//i.test(url)) {
       window.open(url, "_blank", "noopener,noreferrer");
     }
@@ -105,7 +103,6 @@ export default function TreeMindmap({
         separation={{ siblings: 1.1, nonSiblings: 1.25 }}
         renderCustomNodeElement={renderNode}
         pathFunc="elbow"
-        styles={{ links: { stroke: "rgba(147,197,253,0.55)", strokeWidth: 1.6 } }}
         shouldCollapseNeighborNodes={false}
         onNodeClick={handleNodeClick}
         zoomable
