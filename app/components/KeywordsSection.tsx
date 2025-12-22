@@ -86,13 +86,13 @@ export function KeywordsSection({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search keywords..."
-          className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] transition-all placeholder:text-[var(--muted)]"
+          className="w-full px-3 py-2 rounded-lg bg-[var(--section-bg)] border border-[var(--border)] text-sm outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] transition-all placeholder:text-[var(--muted)]"
         />
       </div>
 
-      <div className="flex-1 overflow-auto rounded-lg border border-[var(--border)] bg-[var(--background)]/50">
+      <div className="flex-1 overflow-auto rounded-lg border border-[var(--border)] bg-[var(--section-bg)]">
         <table className="w-full text-sm text-left">
-          <thead className="sticky top-0 bg-[var(--card-bg)] text-[var(--muted)] text-xs uppercase tracking-wide font-semibold border-b border-[var(--border)] z-10">
+          <thead className="sticky top-0 bg-[var(--section-bg)] text-[var(--muted)] text-xs uppercase tracking-wide font-semibold border-b border-[var(--border)] z-10">
             <tr>
               <th 
                 className="px-4 py-3 cursor-pointer hover:text-[var(--foreground)] transition-colors select-none"
@@ -104,10 +104,10 @@ export function KeywordsSection({
                 </div>
               </th>
               <th 
-                className="px-4 py-3 text-right cursor-pointer hover:text-[var(--foreground)] transition-colors select-none"
+                className="px-4 py-3 text-center cursor-pointer hover:text-[var(--foreground)] transition-colors select-none w-[80px]"
                 onClick={() => handleSort("count")}
               >
-                <div className="flex items-center justify-end gap-1">
+                <div className="flex items-center justify-center gap-1">
                   Count
                   <SortIcon column="count" />
                 </div>
@@ -128,7 +128,7 @@ export function KeywordsSection({
                   }`}
                 >
                   <td className="px-4 py-2 font-medium text-[var(--foreground)]">{k.term}</td>
-                  <td className="px-4 py-2 text-right tabular-nums text-[var(--muted)]">{k.df}</td>
+                  <td className="px-4 py-2 text-center tabular-nums text-[var(--muted)] w-[80px]">{k.df}</td>
                   <td className="px-4 py-2 text-right">
                     {isSelected ? (
                       <button

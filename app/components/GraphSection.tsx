@@ -394,7 +394,7 @@ export function GraphSection({
                   </button>
                 </div>
                 
-                <div className="relative flex-1 min-h-[120px] bg-[var(--background)] rounded-lg border border-[var(--border)] p-4 overflow-y-auto leading-relaxed text-[var(--foreground)] scrollbar-thin">
+                <div className="relative flex-1 min-h-[120px] bg-[var(--section-bg)] rounded-lg border border-[var(--border)] p-4 overflow-y-auto leading-relaxed text-[var(--foreground)] scrollbar-thin">
                    {summaryText ? (
                      <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-headings:my-3 prose-strong:font-semibold">
                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -463,7 +463,7 @@ export function GraphSection({
               <div className="text-xs opacity-70 mt-1">Select keywords from the sidebar to generate graph</div>
             </div>
           ) : (
-            <div className="flex-1 w-full min-h-[400px] relative border border-[var(--border)]/50 rounded-lg overflow-hidden bg-[var(--background)]">
+            <div className="flex-1 w-full min-h-[400px] relative border border-[var(--border)]/50 rounded-lg overflow-hidden bg-[var(--section-bg)]">
                <div ref={containerRef} className="absolute inset-0">
                  {dimensions.width > 0 && dimensions.height > 0 && (
                    <ForceGraph2D

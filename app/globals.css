@@ -5,6 +5,7 @@
   --background: #fafafa;    /* Page background */
   --foreground: #171717;    /* Primary text */
   --card-bg: #ffffff;       /* Card surfaces */
+  --section-bg: #f5f5f5;    /* Inner section backgrounds */
   --card-border: #e5e5e5;   /* Card borders */
   --primary: #171717;       /* Buttons and accents */
   --primary-fg: #ffffff;    /* Button text */
@@ -31,6 +32,7 @@
     --background: #000000;    /* Page background */
     --foreground: #ededed;    /* Primary text */
     --card-bg: #171717;       /* Card surfaces */
+    --section-bg: #1f1f1f;    /* Inner section backgrounds */
     --card-border: #262626;   /* Card borders */
     --primary: #ffffff;       /* Buttons and accents */
     --primary-fg: #000000;    /* Button text */

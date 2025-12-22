@@ -163,7 +163,7 @@ export function GeminiChatSection({
         {/* Chat history */}
         <div
           ref={scrollRef}
-          className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--background)]/50 p-4 overflow-auto space-y-4 mb-4"
+          className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--section-bg)] p-4 overflow-auto space-y-4 mb-4"
         >
           {chat.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-[var(--muted)] text-center px-6">
@@ -183,7 +183,7 @@ export function GeminiChatSection({
                 className={`max-w-[90%] rounded-lg px-4 py-3 text-sm leading-relaxed ${
                   m.role === "user"
                     ? "bg-[var(--foreground)] text-[var(--background)]"
-                    : "bg-[var(--card-bg)] border border-[var(--border)] text-[var(--foreground)]"
+                    : "bg-[#a3a3a3] text-[#171717]"
                 }`}
               >
                 <div className="mb-1 text-[10px] uppercase tracking-wider font-semibold opacity-60">
@@ -231,8 +231,8 @@ export function GeminiChatSection({
                   sendMessage();
                 }
               }}
-              placeholder="Type your query..."
-              className="flex-1 input-base bg-[var(--card-bg)] py-2.5"
+              placeholder="Type your question..."
+              className="flex-1 input-base bg-[var(--card-bg)] py-2.5 px-3"
               autoFocus={isExpanded}
             />
             <button
