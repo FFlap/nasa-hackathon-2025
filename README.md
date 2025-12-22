@@ -1,5 +1,9 @@
 # NASA Research Explorer
 
+
+https://github.com/user-attachments/assets/361b0bba-1a61-4aba-9792-4636f2dfb31b
+
+
 A web application for analyzing and visualizing research publications. Upload CSV files containing research data, extract keywords, visualize relationships, and chat with AI about your research.
 
 ## Features
