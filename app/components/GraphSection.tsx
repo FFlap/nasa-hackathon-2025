@@ -184,8 +184,11 @@ export function GraphSection({
     }
   }
 
-  // Layout: spread out links & nodes
-  useEffect(() => {
+  // Track when graph is mounted to ensure forces are configured
+  const [graphMounted, setGraphMounted] = useState(false);
+
+  // Function to configure forces - called after mount and on graph updates
+  const configureForces = React.useCallback(() => {
     if (!fgRef.current) return;
 
     // Stronger repulsion for more space (balanced)
@@ -217,19 +220,23 @@ export function GraphSection({
       )
     );
 
-    // Re-heat and autofit
+    // Re-heat simulation to spread nodes
     (fgRef.current as ForceGraphMethods).d3ReheatSimulation();
-    const t = setTimeout(() => {
-      try {
-        if (fgRef.current) {
-          (fgRef.current as ForceGraphMethods).zoomToFit(600, 80);
-        }
-      } catch {}
-    }, 450);
-    return () => clearTimeout(t);
-  }, [graph, fgRef]); // Removed dimensions - only re-layout when graph data changes
+  }, [fgRef]);
 
-  // Type-safe callback wrappers for ForceGraph2D
+  // Configure forces when graph mounts
+  useEffect(() => {
+    if (graphMounted) {
+      configureForces();
+    }
+  }, [graphMounted, configureForces]);
+
+  //spread out links & nodes 
+  useEffect(() => {
+    if (!fgRef.current) return;
+    configureForces();
+  }, [graph, fgRef, configureForces]); 
+
   const handleLinkWidth = (link: FGLink): number => {
     return 0.5 + Math.min(5, link.weight);
   };
@@ -474,6 +481,18 @@ export function GraphSection({
                      nodeCanvasObject={handleNodeCanvas as (node: object, ctx: CanvasRenderingContext2D, scale: number) => void}
                      nodePointerAreaPaint={handleNodePointerArea as (node: object, color: string, ctx: CanvasRenderingContext2D) => void}
                      onNodeClick={handleNodeClick as (node: object, event: MouseEvent) => void}
+                     onEngineStop={() => {
+                        // Configure forces on first mount, then zoom
+                        if (!graphMounted) {
+                          setGraphMounted(true);
+                          configureForces();
+                        }
+                        if (fgRef.current) {
+                          try {
+                            (fgRef.current as ForceGraphMethods).zoomToFit(400, 60);
+                          } catch {}
+                        }
+                      }}
                    />
                  )}
                </div>

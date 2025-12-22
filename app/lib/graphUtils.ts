@@ -33,10 +33,15 @@ export function buildGraph(
   selected: string[],
   docTfs: Map<string, Map<string, number>>
 ): { nodes: GraphNode[]; links: GraphLink[] } {
+  // Random position so nodes don't all start at (0,0)
+  const randomPos = () => (Math.random() - 0.5) * 600;
+  
   const keywordNodes: GraphNode[] = selected.map((t) => ({
     id: `k:${t}`,
     type: "keyword",
     label: t,
+    x: randomPos(),
+    y: randomPos(),
   }));
   
   const articleNodes: GraphNode[] = [];
@@ -61,6 +66,8 @@ export function buildGraph(
         label: a.title || a.id,
         url: a.url,
         hits,
+        x: randomPos(),
+        y: randomPos(),
       });
     }
   }
