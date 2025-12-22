@@ -61,7 +61,7 @@ A web application for analyzing and visualizing research publications. Upload CS
 
 1. Sign up for an account or log in
 2. Click New Analysis in the sidebar
-3. Upload a CSV file with research publication data
+3. Upload a CSV file with research publication data (sample files available in the `examples/` folder)
 4. Click Start Analysis to process the data
 5. Explore the keyword graph and document distribution
 6. Use the AI chat to ask questions about your research
