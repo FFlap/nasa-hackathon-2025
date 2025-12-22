@@ -11,19 +11,36 @@ interface GeminiChatSectionProps {
   selected: string[];
   articles: Article[];
   docTfs: Map<string, Map<string, number>>;
+  onChatUpdate?: (chat: ChatMsg[]) => void;
+  chatKey?: string; // Used to reset chat when switching files
+  initialChat?: ChatMsg[]; // Saved chat history to load
 }
 
 export function GeminiChatSection({
   selected,
   articles,
   docTfs,
+  onChatUpdate,
+  chatKey,
+  initialChat = [],
 }: GeminiChatSectionProps) {
-  const [chat, setChat] = React.useState<ChatMsg[]>([]);
+  const [chat, setChat] = React.useState<ChatMsg[]>(initialChat);
   const [userInput, setUserInput] = React.useState("");
   const [includeSelectedArticles, setIncludeSelectedArticles] = React.useState(true);
   const [sending, setSending] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const prevChatKeyRef = React.useRef<string | undefined>(chatKey);
+
+  // Reset chat when chatKey changes (switching files) - load initialChat
+  React.useEffect(() => {
+    // Only reset if chatKey actually changed (not just on re-renders)
+    if (chatKey !== prevChatKeyRef.current) {
+      prevChatKeyRef.current = chatKey;
+      setChat(initialChat);
+      setUserInput("");
+    }
+  }, [chatKey, initialChat]);
 
   const relevantArticles = React.useMemo(() => {
     if (!selected.length) return [];
@@ -38,6 +55,13 @@ export function GeminiChatSection({
     if (!scrollRef.current) return;
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [chat, sending, isExpanded]);
+
+  // Persist chat changes
+  React.useEffect(() => {
+    if (chat.length > 0 && onChatUpdate) {
+      onChatUpdate(chat);
+    }
+  }, [chat, onChatUpdate]);
 
   async function sendMessage() {
     const text = userInput.trim();

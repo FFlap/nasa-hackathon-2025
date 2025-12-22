@@ -19,6 +19,8 @@ interface UseKeywordsResult {
   setMaxTerms: (value: number) => void;
   addKeyword: (term: string) => void;
   removeKeyword: (term: string) => void;
+  resetKeywords: () => void;
+  setSelected: (keywords: string[]) => void;
 }
 
 export function useKeywords(articles: Article[]): UseKeywordsResult {
@@ -73,6 +75,11 @@ export function useKeywords(articles: Article[]): UseKeywordsResult {
     setSelected((prev) => prev.filter((t) => t !== term));
   }, []);
 
+  const resetKeywords = useCallback(() => {
+    setSelected([]);
+    setQuery("");
+  }, []);
+
   return {
     selected,
     query,
@@ -87,5 +94,7 @@ export function useKeywords(articles: Article[]): UseKeywordsResult {
     setMaxTerms,
     addKeyword,
     removeKeyword,
+    resetKeywords,
+    setSelected,
   };
 }

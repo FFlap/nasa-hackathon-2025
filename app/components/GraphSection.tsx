@@ -85,6 +85,15 @@ export function GraphSection({
   const [summaryText, setSummaryText] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Debounced histogram data to prevent rapid re-renders when switching analyses
+  const [stableHistogramData, setStableHistogramData] = useState(histogramData);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStableHistogramData(histogramData);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [histogramData]);
+
   // Resize observer for graph container
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -119,7 +128,7 @@ export function GraphSection({
       cancelAnimationFrame(rafId);
       resizeObserver.disconnect();
     };
-  }, [isExpanded, selected.length]);
+  }, [isExpanded]); // Removed selected.length - not needed for resize observer
 
   const relevantArticles = React.useMemo(() => {
     if (!selected.length) return [];
@@ -218,7 +227,7 @@ export function GraphSection({
       } catch {}
     }, 450);
     return () => clearTimeout(t);
-  }, [graph, fgRef, dimensions]); // Added dimensions dependency to re-simulate on resize
+  }, [graph, fgRef]); // Removed dimensions - only re-layout when graph data changes
 
   // Type-safe callback wrappers for ForceGraph2D
   const handleLinkWidth = (link: FGLink): number => {
@@ -303,54 +312,55 @@ export function GraphSection({
         {!isExpanded && (
           <div className="grid grid-cols-1 gap-4">
              {/* Conditionally render Histogram if data exists */}
-             {histogramData.length > 0 && (
+             {stableHistogramData.length > 0 && (
                <div className="card p-4 flex flex-col">
                   <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Document Distribution</h3>
-                  <div className="flex-1 min-h-[180px]">
-                    <ResponsiveContainer width="100%" height="100%">
+                  <div className="flex-1 min-h-[180px] w-full overflow-hidden">
+                    <ResponsiveContainer width="100%" height={180}>
                       <BarChart
-                        data={histogramData}
+                        key={`histogram-${stableHistogramData.length}-${stableHistogramData[0]?.term || 'empty'}`}
+                        data={stableHistogramData}
                         margin={{ top: 5, right: 5, left: -25, bottom: 0 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
-                        <XAxis
-                          dataKey="term"
-                          tick={{ fontSize: 10, fill: "var(--muted)" }}
-                          interval={0} 
-                          angle={-45}
-                          textAnchor="end"
-                          height={60}
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <YAxis 
-                          tick={{ fontSize: 10, fill: "var(--muted)" }} 
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <Tooltip
-                          cursor={{ fill: "var(--foreground)", opacity: 0.1 }}
-                          contentStyle={{
-                            background: "var(--card-bg)",
-                            color: "var(--foreground)",
-                            borderRadius: "8px",
-                            border: "1px solid var(--border)",
-                            fontSize: "12px",
-                            boxShadow: "none"
-                          }}
-                          itemStyle={{ color: "var(--foreground)" }}
-                          labelStyle={{ fontWeight: 600, marginBottom: "4px", color: "var(--foreground)" }}
-                          formatter={(value: number) => [`${value}`, "Documents"]}
-                        />
-                        <Bar
-                          dataKey="count"
-                          name="Docs"
-                          radius={[2, 2, 0, 0]}
-                          fill="var(--foreground)" 
-                          className="opacity-80 hover:opacity-100 transition-opacity"
-                          barSize={20}
-                        />
-                      </BarChart>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                      <XAxis
+                        dataKey="term"
+                        tick={{ fontSize: 10, fill: "var(--muted)" }}
+                        interval={0} 
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 10, fill: "var(--muted)" }} 
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <Tooltip
+                        cursor={{ fill: "var(--foreground)", opacity: 0.1 }}
+                        contentStyle={{
+                          background: "var(--card-bg)",
+                          color: "var(--foreground)",
+                          borderRadius: "8px",
+                          border: "1px solid var(--border)",
+                          fontSize: "12px",
+                          boxShadow: "none"
+                        }}
+                        itemStyle={{ color: "var(--foreground)" }}
+                        labelStyle={{ fontWeight: 600, marginBottom: "4px", color: "var(--foreground)" }}
+                        formatter={(value: number) => [`${value}`, "Documents"]}
+                      />
+                      <Bar
+                        dataKey="count"
+                        name="Docs"
+                        radius={[2, 2, 0, 0]}
+                        fill="var(--foreground)" 
+                        className="opacity-80 hover:opacity-100 transition-opacity"
+                        barSize={20}
+                      />
+                    </BarChart>
                     </ResponsiveContainer>
                   </div>
                </div>

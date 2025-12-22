@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-interface HeaderProps {}
 
-export function Header({}: HeaderProps) {
+export function Header() {
   return (
     <header className="sticky top-0 z-20 bg-[var(--background)]/80 backdrop-blur-md border-b border-[var(--border)]">
       <div className="max-w-[1600px] mx-auto px-6 py-3 flex items-center justify-between">

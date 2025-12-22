@@ -48,15 +48,39 @@ body {
 }
 
 /* Reusable Component Classes */
-@layer utilities {
-  .card {
-    @apply bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl shadow-none text-sm;
-  }
-  .btn-primary {
-    @apply bg-[var(--primary)] text-[var(--primary-fg)] hover:opacity-90 transition-opacity rounded-lg px-4 py-2 font-medium;
-  }
-  .input-base {
-    @apply bg-transparent border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all;
-  }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  box-shadow: none;
+  font-size: 0.875rem;
 }
 
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.input-base {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-right: 0.75rem;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.input-base:focus {
+  box-shadow: 0 0 0 1px var(--primary);
+  border-color: var(--primary);
+}

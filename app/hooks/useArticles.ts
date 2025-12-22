@@ -15,7 +15,8 @@ interface UseArticlesResult {
   setColTitle: (value: string) => void;
   setColUrl: (value: string) => void;
   handleFileLoaded: (rows: Row[], guessedTitle: string, guessedUrl: string) => void;
-  scrapeAll: () => Promise<void>;
+  scrapeAll: (onComplete?: (articles: Article[]) => void) => Promise<void>;
+  resetProgress: () => void;
 }
 
 export function useArticles(): UseArticlesResult {
@@ -36,7 +37,7 @@ export function useArticles(): UseArticlesResult {
     []
   );
 
-  const scrapeAll = useCallback(async () => {
+  const scrapeAll = useCallback(async (onComplete?: (articles: Article[]) => void) => {
     const items = rows
       .map((r, i) => {
         const title = String((r[colTitle] ?? "") || "");
@@ -98,9 +99,20 @@ export function useArticles(): UseArticlesResult {
       new Array(Math.min(concurrency, items.length)).fill(0).map(() => pump())
     );
 
-    setArticles(results.filter(Boolean));
+    const finalArticles = results.filter(Boolean);
+    setArticles(finalArticles);
     setScraping(false);
+    
+    // Call completion callback with the results
+    if (onComplete) {
+      onComplete(finalArticles);
+    }
   }, [rows, colTitle, colUrl]);
+
+  // Reset progress state
+  const resetProgress = useCallback(() => {
+    setProgress({ done: 0, total: 0 });
+  }, []);
 
   return {
     rows,
@@ -115,5 +127,6 @@ export function useArticles(): UseArticlesResult {
     setColUrl,
     handleFileLoaded,
     scrapeAll,
+    resetProgress,
   };
 }
