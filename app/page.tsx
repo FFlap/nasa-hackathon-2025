@@ -267,7 +267,19 @@ export default function Page() {
     }
   }
 
-  // Save keyword selections to file
+  // Keywords auto save
+  useEffect(() => {
+
+    if (!activeFileId || isFileLoading) return;
+  
+    const timer = setTimeout(() => {
+      saveKeywordSelection();
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [selected, activeFileId, isFileLoading]);
+
+  // Save keyword selections to file (internal helper)
   async function saveKeywordSelection() {
     if (!activeFileId) return;
 
@@ -277,6 +289,13 @@ export default function Page() {
       
       if (data.file) {
         const existingData = JSON.parse(data.file.csvData || '{}');
+        
+        // Check if actually different to minimize writes
+        const currentSaved = JSON.stringify(existingData.selectedKeywords || []);
+        const newSelection = JSON.stringify(selected);
+        
+        if (currentSaved === newSelection) return;
+
         const newData = {
           ...existingData,
           selectedKeywords: selected,
@@ -292,9 +311,6 @@ export default function Page() {
       console.error("Failed to save keywords:", error);
     }
   }
-
-  // NOTE: Keywords are saved when chat is saved (saveChatHistory includes selectedKeywords)
-  // Removed auto-save useEffect that was causing infinite loops when switching analyses
 
   // Extended file loaded handler - store filename for later save
   function handleFileLoadedWithSave(

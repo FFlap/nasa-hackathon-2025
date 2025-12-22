@@ -128,7 +128,7 @@ export function GraphSection({
       cancelAnimationFrame(rafId);
       resizeObserver.disconnect();
     };
-  }, [isExpanded]); // Removed selected.length - not needed for resize observer
+  }, [isExpanded, selected.length]); // Re-measure when container visibility changes
 
   const relevantArticles = React.useMemo(() => {
     if (!selected.length) return [];
