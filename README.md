@@ -31,11 +31,7 @@ A web application for analyzing and visualizing research publications. Upload CS
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <your-repo-url>
-   cd nasa-hackathon-2025
-   ```
+1. Clone the repository
 
 2. Install dependencies:
    ```bash
